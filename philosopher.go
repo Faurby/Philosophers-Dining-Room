@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -31,7 +29,7 @@ type Philosopher struct {
 	leftFork   *Fork
 }
 
-func (p Philosopher) eat() {
+func (p *Philosopher) eat() {
 	//check if I am eating
 	for !p.eating {
 		//check if both forks are available
@@ -41,10 +39,10 @@ func (p Philosopher) eat() {
 
 			//eating is true, go out of while loop next time
 			p.eating = true
-			fmt.Println(p.Name + " is eating")
-			time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+			//fmt.Println(p.Name + " is eating")
+			time.Sleep(time.Duration(rand.Intn(3)) * time.Millisecond)
 			p.timesEaten++
-			fmt.Println(p.Name + " has eaten " + strconv.Itoa(p.timesEaten) + " times")
+			//fmt.Println(p.Name + " has eaten " + strconv.Itoa(p.timesEaten) + " times")
 
 			p.rightFork.Unlock()
 			p.leftFork.Unlock()
@@ -55,10 +53,10 @@ func (p Philosopher) eat() {
 	p.think()
 }
 
-func (p Philosopher) think() {
+func (p *Philosopher) think() {
 	p.thinking = true
-	fmt.Println(p.Name + " is thinking")
-	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+	//fmt.Println(p.Name + " is thinking")
+	time.Sleep(time.Duration(rand.Intn(3)) * time.Millisecond)
 	p.thinking = false
 	p.eat()
 }
