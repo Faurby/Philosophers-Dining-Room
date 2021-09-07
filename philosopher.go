@@ -1,11 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 )
+
+func channel() chan int {
+	return make(chan int)
+}
+
+func checkChannel() int {
+	var x int
+	c := channel()
+	x = <-c
+	if x != 0 {
+		return x
+	} else {
+		return -1
+	}
+}
 
 type Philosopher struct {
 	Name       string
@@ -16,23 +29,23 @@ type Philosopher struct {
 
 func (p Philosopher) eat() {
 	p.eating = true
-	fmt.Println(p.Name + " is eating")
-	time.Sleep(time.Duration(rand.Intn(5)) * time.Millisecond)
+	//fmt.Println(p.Name + " is eating")
+	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
 	p.timesEaten++
-	fmt.Println(p.Name + " has eaten " + strconv.Itoa(p.timesEaten) + " times")
+	//fmt.Println(p.Name + " has eaten " + strconv.Itoa(p.timesEaten) + " times")
 	p.eating = false
 	p.think()
 }
 
 func (p Philosopher) think() {
 	p.thinking = true
-	fmt.Println(p.Name + " is thinking")
-	time.Sleep(time.Duration(rand.Intn(5)) * time.Millisecond)
+	//fmt.Println(p.Name + " is thinking")
+	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
 	p.thinking = false
 	p.eat()
 }
 
-func makePhils() []Philosopher {
+func MakePhils() []Philosopher {
 	p1 := Philosopher{Name: "Socrates"}
 	p2 := Philosopher{Name: "Sartre"}
 	p3 := Philosopher{Name: "Aristotle"}
