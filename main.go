@@ -1,6 +1,10 @@
 package main
 
-import "time"
+import (
+	"fmt"
+	"strconv"
+	"time"
+)
 
 func main() {
 	//running := true
@@ -15,10 +19,17 @@ func main() {
 		go element.think()
 	}
 
-	time.Sleep(time.Duration(1000 * time.Second))
+	for i := 0; i < 1000; i++ {
+		time.Sleep(time.Duration(1 * time.Second))
+		for _, element := range slice {
+			fmt.Println(element.Name + " has eaten " + strconv.Itoa(element.timesEaten) + " times")
+
+		}
+		fmt.Println("----------------------------------")
+	}
 }
 
-func MakePhils() []Philosopher {
+func MakePhils() []*Philosopher {
 	f1 := Fork{}
 	f2 := Fork{}
 	f3 := Fork{}
@@ -30,5 +41,5 @@ func MakePhils() []Philosopher {
 	p3 := Philosopher{Name: "Aristotle", leftFork: &f3, rightFork: &f4}
 	p4 := Philosopher{Name: "Descartes", leftFork: &f4, rightFork: &f5}
 	p5 := Philosopher{Name: "Pythagoras", leftFork: &f5, rightFork: &f1}
-	return []Philosopher{p1, p2, p3, p4, p5}
+	return []*Philosopher{&p1, &p2, &p3, &p4, &p5}
 }
