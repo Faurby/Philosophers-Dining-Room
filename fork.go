@@ -5,5 +5,5 @@ import "sync"
 type Fork struct {
 	numberUsed int
 	inUse      bool
-	arbiter    sync.Mutex
+	sync.Mutex
 }

@@ -27,26 +27,32 @@ type Philosopher struct {
 	timesEaten int
 	eating     bool
 	thinking   bool
-	rightFork  Fork
-	leftFork   Fork
+	rightFork  *Fork
+	leftFork   *Fork
 }
 
 func (p Philosopher) eat() {
-	//check if I can eat
-	if !p.rightFork.inUse && !p.leftFork.inUse {
-		p.rightFork.arbiter.Lock()
-		p.leftFork.arbiter.Lock()
+	//check if I am eating
+	for !p.eating {
+		//check if both forks are available
+		if !p.rightFork.inUse && !p.leftFork.inUse {
+			p.rightFork.Lock()
+			p.leftFork.Lock()
 
-		p.eating = true
-		fmt.Println(p.Name + " is eating")
-		time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
-		p.timesEaten++
-		fmt.Println(p.Name + " has eaten " + strconv.Itoa(p.timesEaten) + " times")
-		p.eating = false
-		p.rightFork.arbiter.Unlock()
-		p.leftFork.arbiter.Unlock()
-		p.think()
+			//eating is true, go out of while loop next time
+			p.eating = true
+			fmt.Println(p.Name + " is eating")
+			time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+			p.timesEaten++
+			fmt.Println(p.Name + " has eaten " + strconv.Itoa(p.timesEaten) + " times")
+
+			p.rightFork.Unlock()
+			p.leftFork.Unlock()
+		}
 	}
+	//eating is false, now think
+	p.eating = false
+	p.think()
 }
 
 func (p Philosopher) think() {
