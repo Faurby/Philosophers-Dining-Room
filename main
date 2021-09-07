@@ -1,9 +1,0 @@
-Project main{
-
-import "fmt"
-
-func main(){
-
-}
-
-}
