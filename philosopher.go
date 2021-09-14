@@ -27,6 +27,10 @@ type Philosopher struct {
 	thinking   bool
 	rightFork  *Fork
 	leftFork   *Fork
+	Lin        chan string
+	Lout       chan string
+	Rin        chan string
+	Rout       chan string
 }
 
 func (p *Philosopher) eat() {
