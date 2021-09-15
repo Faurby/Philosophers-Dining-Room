@@ -7,29 +7,7 @@ import (
 )
 
 func main() {
-	//running := true
-	//messageToPhil := make(chan string)
-	//messageFromPhil := make(chan int)
 
-	slice := CreateEverything()
-
-	//fmt.Println(slice)
-
-	for _, element := range slice {
-		go element.think()
-	}
-
-	for i := 0; i < 1000; i++ {
-		time.Sleep(time.Duration(1 * time.Second))
-		for _, element := range slice {
-			fmt.Println(element.Name + " has eaten " + strconv.Itoa(element.timesEaten) + " times")
-
-		}
-		fmt.Println("----------------------------------")
-	}
-}
-
-func CreateEverything() []*Philosopher {
 	ch1 := make(chan string)
 	ch2 := make(chan string)
 	ch3 := make(chan string)
@@ -56,11 +34,29 @@ func CreateEverything() []*Philosopher {
 	f2 := Fork{id: 2, Lin: ch9, Lout: ch10, Rin: ch11, Rout: ch12}
 	f3 := Fork{id: 3, Lin: ch13, Lout: ch14, Rin: ch15, Rout: ch16}
 	f4 := Fork{id: 4, Lin: ch17, Lout: ch18, Rin: ch19, Rout: ch20}
+	forkArray := []*Fork{&f0, &f1, &f2, &f3, &f4}
 
 	pa := Philosopher{Name: "A", leftFork: &f0, rightFork: &f1, Lin: ch2, Lout: ch1, Rin: ch20, Rout: ch19}
 	pb := Philosopher{Name: "B", leftFork: &f1, rightFork: &f2, Lin: ch6, Lout: ch5, Rin: ch4, Rout: ch3}
 	pc := Philosopher{Name: "C", leftFork: &f2, rightFork: &f3, Lin: ch10, Lout: ch9, Rin: ch8, Rout: ch7}
 	pd := Philosopher{Name: "D", leftFork: &f3, rightFork: &f4, Lin: ch14, Lout: ch13, Rin: ch12, Rout: ch11}
 	pe := Philosopher{Name: "E", leftFork: &f4, rightFork: &f0, Lin: ch18, Lout: ch17, Rin: ch16, Rout: ch15}
-	return []*Philosopher{&pa, &pb, &pc, &pd, &pe}
+	philArray := []*Philosopher{&pa, &pb, &pc, &pd, &pe}
+
+	for _, element := range philArray {
+		go element.start()
+	}
+
+	for _, element := range forkArray {
+		go element.secondStart()
+	}
+
+	for {
+		time.Sleep(time.Duration(1 * time.Second))
+		for _, element := range philArray {
+			fmt.Println(element.Name + " has eaten " + strconv.Itoa(element.timesEaten) + " times")
+
+		}
+		fmt.Println("----------------------------------")
+	}
 }

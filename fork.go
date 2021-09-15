@@ -1,17 +1,22 @@
 package main
 
-import "sync"
-
 type Fork struct {
-	id         int
-	numberUsed int
-	inUse      bool
-	Lin        chan string
-	Lout       chan string
-	Rin        chan string
-	Rout       chan string
+	id   int
+	Lin  chan string
+	Lout chan string
+	Rin  chan string
+	Rout chan string
 }
 
-func createFork(id int) {
-	return Fork()
+func (F *Fork) secondStart() {
+	for {
+		select {
+		case <-F.Lin:
+			F.Lout <- "eat now"
+			<-F.Lin
+		case <-F.Rin:
+			F.Rout <- "eat now"
+			<-F.Rin
+		}
+	}
 }
