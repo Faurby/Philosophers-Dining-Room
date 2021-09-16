@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 )
 
 func main() {
+	queryIN, queryOUT := make(chan string), make(chan string)
 
 	ch1 := make(chan string)
 	ch2 := make(chan string)
@@ -29,18 +29,18 @@ func main() {
 	ch19 := make(chan string)
 	ch20 := make(chan string)
 
-	f0 := Fork{id: 0, Lin: ch1, Lout: ch2, Rin: ch3, Rout: ch4}
-	f1 := Fork{id: 1, Lin: ch5, Lout: ch6, Rin: ch7, Rout: ch8}
-	f2 := Fork{id: 2, Lin: ch9, Lout: ch10, Rin: ch11, Rout: ch12}
-	f3 := Fork{id: 3, Lin: ch13, Lout: ch14, Rin: ch15, Rout: ch16}
-	f4 := Fork{id: 4, Lin: ch17, Lout: ch18, Rin: ch19, Rout: ch20}
+	f0 := Fork{id: 0, Lin: ch1, Lout: ch2, Rin: ch3, Rout: ch4, queryIN: queryOUT, queryOUT: queryIN}
+	f1 := Fork{id: 1, Lin: ch5, Lout: ch6, Rin: ch7, Rout: ch8, queryIN: queryOUT, queryOUT: queryIN}
+	f2 := Fork{id: 2, Lin: ch9, Lout: ch10, Rin: ch11, Rout: ch12, queryIN: queryOUT, queryOUT: queryIN}
+	f3 := Fork{id: 3, Lin: ch13, Lout: ch14, Rin: ch15, Rout: ch16, queryIN: queryOUT, queryOUT: queryIN}
+	f4 := Fork{id: 4, Lin: ch17, Lout: ch18, Rin: ch19, Rout: ch20, queryIN: queryOUT, queryOUT: queryIN}
 	forkArray := []*Fork{&f0, &f1, &f2, &f3, &f4}
 
-	pa := Philosopher{Name: "A", leftFork: &f0, rightFork: &f1, Lin: ch2, Lout: ch1, Rin: ch20, Rout: ch19}
-	pb := Philosopher{Name: "B", leftFork: &f1, rightFork: &f2, Lin: ch6, Lout: ch5, Rin: ch4, Rout: ch3}
-	pc := Philosopher{Name: "C", leftFork: &f2, rightFork: &f3, Lin: ch10, Lout: ch9, Rin: ch8, Rout: ch7}
-	pd := Philosopher{Name: "D", leftFork: &f3, rightFork: &f4, Lin: ch14, Lout: ch13, Rin: ch12, Rout: ch11}
-	pe := Philosopher{Name: "E", leftFork: &f4, rightFork: &f0, Lin: ch18, Lout: ch17, Rin: ch16, Rout: ch15}
+	pa := Philosopher{Name: "A", leftFork: &f0, rightFork: &f1, Lin: ch2, Lout: ch1, Rin: ch20, Rout: ch19, queryIN: queryOUT, queryOUT: queryIN}
+	pb := Philosopher{Name: "B", leftFork: &f1, rightFork: &f2, Lin: ch6, Lout: ch5, Rin: ch4, Rout: ch3, queryIN: queryOUT, queryOUT: queryIN}
+	pc := Philosopher{Name: "C", leftFork: &f2, rightFork: &f3, Lin: ch10, Lout: ch9, Rin: ch8, Rout: ch7, queryIN: queryOUT, queryOUT: queryIN}
+	pd := Philosopher{Name: "D", leftFork: &f3, rightFork: &f4, Lin: ch14, Lout: ch13, Rin: ch12, Rout: ch11, queryIN: queryOUT, queryOUT: queryIN}
+	pe := Philosopher{Name: "E", leftFork: &f4, rightFork: &f0, Lin: ch18, Lout: ch17, Rin: ch16, Rout: ch15, queryIN: queryOUT, queryOUT: queryIN}
 	philArray := []*Philosopher{&pa, &pb, &pc, &pd, &pe}
 
 	for _, element := range philArray {
@@ -53,10 +53,33 @@ func main() {
 
 	for {
 		time.Sleep(time.Duration(1 * time.Second))
-		for _, element := range philArray {
-			fmt.Println(element.Name + " has eaten " + strconv.Itoa(element.timesEaten) + " times")
+		for range philArray {
+			queryOUT <- "timesEaten"
+			input := <-queryIN
 
+			if input != "go away" {
+				fmt.Println(input)
+			}
 		}
 		fmt.Println("----------------------------------")
+		for range philArray {
+			queryOUT <- "eating"
+			input := <-queryIN
+
+			if input != "go away" {
+				fmt.Println(input)
+			}
+		}
+		fmt.Println("----------------------------------")
+		for range forkArray {
+			queryOUT <- "timesUsed"
+			input := <-queryIN
+
+			if input != "go away" {
+				fmt.Println(input)
+			}
+		}
+		fmt.Println("----------------------------------")
+
 	}
 }
