@@ -37,7 +37,6 @@ func (p *Philosopher) handleQuery(in chan string, out chan string) {
 			out <- "go away"
 		}
 	}
-
 }
 
 func (p *Philosopher) start() {

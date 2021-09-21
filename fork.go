@@ -26,7 +26,6 @@ func (F *Fork) handleQuery(in chan string, out chan string) {
 			out <- "go away"
 		}
 	}
-
 }
 
 func (F *Fork) secondStart() {
